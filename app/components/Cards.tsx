@@ -6,6 +6,8 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native';
+import { useState, useEffect } from 'react';
+import * as Location from 'expo-location';
 import usePrayerTimes from '../hooks/usePrayerTimes';
 import { getNextPrayer } from '../utils/prayerUtils';
 import { format, parse } from 'date-fns';
@@ -26,9 +28,36 @@ function getTimeRemaining(prayerTime: string): string {
 
 export default function HomeScreen() {
   const { isLoading, error, data: prayerTimes, refetch } = usePrayerTimes();
-  const nextPrayer = prayerTimes?.timings
-    ? getNextPrayer(prayerTimes.timings)
-    : null;
+  const [city, setCity] = useState<string | null>(null);
+
+  // Fetch the user's location and city name
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        // Request location permissions
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setCity('Location permission denied');
+          return;
+        }
+
+        // Get the user's current location
+        const location = await Location.getCurrentPositionAsync({});
+        const [place] = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+
+        // Set the city name
+        setCity(place.city || place.region || 'Unknown Location');
+      } catch (error) {
+        console.error('Failed to fetch location:', error);
+        setCity('Failed to fetch location');
+      }
+    };
+
+    fetchLocation();
+  }, []);
 
   // Format time from "HH:mm" to 12-hour format
   const formatPrayerTime = (timeString?: string) => {
@@ -78,7 +107,7 @@ export default function HomeScreen() {
       <View className="px-6 py-8">
         {/* Header */}
         <Text className="text-4xl font-semibold text-white mb-2 text-center">
-          {prayerTimes?.meta.timezone || 'Your Location'}
+          {city || 'Fetching location...'}
         </Text>
         <Text className="text-lg text-zinc-100 mb-8 text-center">
           {prayerTimes?.date.readable || format(new Date(), 'MMMM do, yyyy')}
@@ -110,7 +139,11 @@ export default function HomeScreen() {
         )}
         <Text className="text-center text-zinc-300 mt-2">
           Next prayer is in:{' '}
-          {nextPrayer ? getTimeRemaining(nextPrayer.time) : '--:--'}
+          {(() => {
+            if (!prayerTimes?.timings) return '--:--';
+            const nextPrayer = getNextPrayer(prayerTimes.timings);
+            return nextPrayer ? getTimeRemaining(nextPrayer.time) : '--:--';
+          })()}
         </Text>
       </View>
     </ScrollView>

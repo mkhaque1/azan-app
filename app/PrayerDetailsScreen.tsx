@@ -14,7 +14,7 @@ const { height } = Dimensions.get('window');
 export default function PrayerDetailsScreen() {
   return (
     <ImageBackground
-      source={require('../assets/images/background.jpg')}
+      source={require('../assets/images/home.jpg')}
       resizeMode="cover"
       className="flex-1"
       style={{ height }}
