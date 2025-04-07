@@ -1,4 +1,3 @@
-import { Link } from 'expo-router';
 import {
   Text,
   View,
@@ -7,12 +6,29 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
 import usePrayerTimes from '../hooks/usePrayerTimes';
+import { getNextPrayer } from '../utils/prayerUtils';
 import { format, parse } from 'date-fns';
+
+function getTimeRemaining(prayerTime: string): string {
+  try {
+    const now = new Date();
+    const prayerDate = parse(prayerTime, 'HH:mm', now);
+    const diff = prayerDate.getTime() - now.getTime();
+    if (diff <= 0) return 'Time passed';
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}h ${minutes}m remaining`;
+  } catch {
+    return '--:--';
+  }
+}
 
 export default function HomeScreen() {
   const { isLoading, error, data: prayerTimes, refetch } = usePrayerTimes();
+  const nextPrayer = prayerTimes?.timings
+    ? getNextPrayer(prayerTimes.timings)
+    : null;
 
   // Format time from "HH:mm" to 12-hour format
   const formatPrayerTime = (timeString?: string) => {
@@ -80,7 +96,7 @@ export default function HomeScreen() {
             }).map(([key, label]) => (
               <View
                 key={key}
-                className="bg-zinc-600 blur-sm rounded-2xl p-6 mb-3 flex-row justify-between items-center"
+                className="bg-zinc-600 rounded-xl p-6 mb-3 flex-row justify-between items-center"
               >
                 <Text className="text-white text-lg font-medium">{label}</Text>
                 <Text className="text-amber-400 text-xl font-bold">
@@ -92,22 +108,10 @@ export default function HomeScreen() {
             ))}
           </View>
         )}
-
-        {/* Get Started Button */}
-        <Link href="/PrayerDetailsScreen" asChild>
-          <TouchableOpacity className="bg-white rounded-2xl px-6 py-3 shadow-lg">
-            <Text className="text-zinc-900 text-lg font-semibold text-center">
-              Set Azan Alarm
-            </Text>
-          </TouchableOpacity>
-        </Link>
-
-        {/* Current Prayer Indicator (Bonus) */}
-        {prayerTimes?.timings && (
-          <Text className="text-center text-zinc-500 mt-6">
-            Next: Isha at {formatPrayerTime(prayerTimes.timings.Isha)}
-          </Text>
-        )}
+        <Text className="text-center text-zinc-300 mt-2">
+          Next prayer is in:{' '}
+          {nextPrayer ? getTimeRemaining(nextPrayer.time) : '--:--'}
+        </Text>
       </View>
     </ScrollView>
   );

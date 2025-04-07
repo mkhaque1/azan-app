@@ -11,7 +11,6 @@ export const formatPrayerTime = (timeString?: string) => {
 };
 
 export const getCurrentPrayer = (timings: Record<string, string>) => {
-  const now = new Date();
   // Implementation logic to determine current prayer
   return { current: 'Asr', next: 'Maghrib' }; // Example
 };
