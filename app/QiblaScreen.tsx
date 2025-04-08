@@ -1,14 +1,14 @@
-import { Text, View } from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
 
-const SettingsScreen = () => {
+const QiblaScreen = () => {
   return (
     <View className="flex-1 bg-zinc-900 justify-center items-center">
       <Text className="flex justify-center align-middle text-2xl text-white">
-        Settings
+        QiblaScreen
       </Text>
     </View>
   );
 };
 
-export default SettingsScreen;
+export default QiblaScreen;
