@@ -125,10 +125,29 @@ export default function HomeScreen() {
             }).map(([key, label]) => (
               <View
                 key={key}
-                className="bg-zinc-600 rounded-xl p-6 mb-3 flex-row justify-between items-center"
+                className="rounded-xl p-6 mb-3 flex-row justify-between items-center"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
+                  borderWidth: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.2)', // Subtle border for better visibility
+                }}
               >
-                <Text className="text-white text-lg font-medium">{label}</Text>
-                <Text className="text-amber-400 text-xl font-bold">
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: '500',
+                  }}
+                >
+                  {label}
+                </Text>
+                <Text
+                  style={{
+                    color: '#FBBF24', // Amber color for the prayer time
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                  }}
+                >
                   {formatPrayerTime(
                     prayerTimes.timings[key as keyof typeof prayerTimes.timings]
                   )}

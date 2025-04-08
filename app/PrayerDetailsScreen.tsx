@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import Cards from './components/Cards';
 import { Link } from 'expo-router';
+import Calendar from './components/Calendar';
 
 const { height } = Dimensions.get('window');
 
@@ -38,6 +39,9 @@ export default function PrayerDetailsScreen() {
                 </Text>
               </TouchableOpacity>
             </Link>
+          </View>
+          <View className="mt-8">
+            <Calendar />
           </View>
 
           <Text className="text-center text-zinc-300 mt-6">
