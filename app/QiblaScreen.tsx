@@ -28,11 +28,17 @@ const QiblaScreen = () => {
       setQiblaAngle(angle);
 
       // Fetch city name using reverse geocoding
-      const [place] = await Location.reverseGeocodeAsync({
+      const places = await Location.reverseGeocodeAsync({
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
       });
-      setCity(place.city || place.region || 'Unknown Location');
+
+      if (places && places.length > 0) {
+        const place = places[0];
+        setCity(place.city || place.region || 'Unknown Location');
+      } else {
+        setCity('Unknown Location');
+      }
 
       const headingSub = await Location.watchHeadingAsync((data) => {
         setHeading(data.trueHeading ?? data.magHeading);
