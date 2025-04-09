@@ -85,7 +85,7 @@ export default function HomeScreen() {
         <Text className="text-red-400 text-lg mb-4">Error: {error}</Text>
         <TouchableOpacity
           onPress={refetch}
-          className="bg-amber-500 rounded-xl px-4 py-2"
+          className="bg-amber-600 rounded-xl px-4 py-2"
         >
           <Text className="text-white font-semibold">Retry</Text>
         </TouchableOpacity>
@@ -125,29 +125,10 @@ export default function HomeScreen() {
             }).map(([key, label]) => (
               <View
                 key={key}
-                className="rounded-xl p-6 mb-3 flex-row justify-between items-center"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
-                  borderWidth: 1,
-                  borderColor: 'rgba(255, 255, 255, 0.2)', // Subtle border for better visibility
-                }}
+                className="rounded-xl p-6 mb-3 flex-row justify-between items-center bg-white/10 border border-white/20"
               >
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 18,
-                    fontWeight: '500',
-                  }}
-                >
-                  {label}
-                </Text>
-                <Text
-                  style={{
-                    color: '#FBBF24', // Amber color for the prayer time
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                  }}
-                >
+                <Text className="text-white text-lg font-medium">{label}</Text>
+                <Text className="text-amber-500 text-xl font-bold">
                   {formatPrayerTime(
                     prayerTimes.timings[key as keyof typeof prayerTimes.timings]
                   )}

@@ -13,6 +13,7 @@ import { parse } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { formatPrayerTime } from './utils/date';
 import { Asset } from 'expo-asset';
+import { Ionicons } from '@expo/vector-icons';
 
 const { height } = Dimensions.get('window');
 
@@ -116,6 +117,10 @@ export default function HomeScreen() {
       style={{ height, width: '100%' }}
     >
       <View className="flex-1 justify-center items-center bg-black/50 px-6">
+        <Ionicons name={'happy'} size={48} color={'#f59e0b'} />
+        <Text className="text-4xl font-semibold text-amber-600 mb-2 text-center">
+          السلام عليكم
+        </Text>
         <Text className="text-4xl font-semibold text-white mb-4 text-center">
           Welcome to Azan App
         </Text>

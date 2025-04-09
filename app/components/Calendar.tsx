@@ -159,7 +159,7 @@ const Calendar = () => {
               borderRadius: 8,
               backgroundColor:
                 day === today
-                  ? 'rgba(16, 185, 129, 0.8)' // Highlight current day
+                  ? '#FFA000' // Highlight current day
                   : day
                   ? 'rgba(255, 255, 255, 0.1)'
                   : 'transparent',
