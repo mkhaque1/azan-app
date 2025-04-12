@@ -13,13 +13,20 @@ import Cards from './components/Cards';
 import { Link } from 'expo-router';
 import Calendar from './components/Calendar';
 import ReadQuran from './components/ReadQuran'; // Import the ReadQuran component
+import { useFonts } from 'expo-font';
 
 const { height } = Dimensions.get('window');
 
 export default function PrayerDetailsScreen() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedContent, setSelectedContent] = useState<any[]>([]);
   const [showReadQuran, setShowReadQuran] = useState(false); // State to toggle ReadQuran
+
+  // Load custom fonts
+  const [fontsLoaded] = useFonts({
+    ScheherazadeNew: require('../assets/fonts/ScheherazadeNew-Regular.ttf'),
+  });
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -34,13 +41,18 @@ export default function PrayerDetailsScreen() {
     fetchContent();
   }, []);
 
-  if (loading) {
+  if (!fontsLoaded || loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#10b981" />
       </View>
     );
   }
+
+  const openQuran = (content: any[]) => {
+    setSelectedContent(content);
+    setShowReadQuran(true);
+  };
 
   return (
     <ImageBackground
@@ -89,18 +101,21 @@ export default function PrayerDetailsScreen() {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(false);
-            setShowReadQuran(false); // Reset ReadQuran state when modal closes
-          }}
+          onRequestClose={() => setModalVisible(false)} // Close modal on request
         >
           <View className="flex-1 justify-center items-center bg-black/50 px-6">
             {showReadQuran ? (
               // Render ReadQuran component
-              <ReadQuran />
+              <ReadQuran
+                onClose={() => {
+                  setModalVisible(false); // Close the modal
+                  setShowReadQuran(false); // Reset the Quran view
+                }}
+                content={selectedContent} // Pass the selected content
+              />
             ) : (
-              <View className="bg-white/90 rounded-lg p-6 w-full max-w-md">
-                <Text className="text-lg font-bold text-center mb-4">
+              <View className="bg-zinc-800 rounded-lg p-6 w-full max-w-md">
+                <Text className="text-lg text-white font-bold text-center mb-4">
                   Select Quran Translation
                 </Text>
 
@@ -108,8 +123,11 @@ export default function PrayerDetailsScreen() {
                 <TouchableOpacity
                   className="bg-amber-500/20 rounded-lg p-4 mb-4"
                   activeOpacity={0.8}
+                  onPress={() =>
+                    openQuran(require('../assets/quran/arabicquran.json'))
+                  }
                 >
-                  <Text className="text-amber-600 text-lg font-semibold text-center">
+                  <Text className="text-amber-500 text-lg font-semibold text-center">
                     Arabic Quran
                   </Text>
                 </TouchableOpacity>
@@ -118,9 +136,11 @@ export default function PrayerDetailsScreen() {
                 <TouchableOpacity
                   className="bg-amber-500/20 rounded-lg p-4 mb-4"
                   activeOpacity={0.8}
-                  onPress={() => setShowReadQuran(true)} // Show ReadQuran when clicked
+                  onPress={() =>
+                    openQuran(require('../assets/quran/englishquran.json'))
+                  }
                 >
-                  <Text className="text-amber-600 text-lg font-semibold text-center">
+                  <Text className="text-amber-500 text-lg font-semibold text-center">
                     English Quran
                   </Text>
                 </TouchableOpacity>
@@ -130,13 +150,13 @@ export default function PrayerDetailsScreen() {
                   className="bg-amber-500/20 rounded-lg p-4 mb-4"
                   activeOpacity={0.8}
                 >
-                  <Text className="text-amber-600 text-lg font-semibold text-center">
+                  <Text className="text-amber-500 text-lg font-semibold text-center">
                     Bengali Quran
                   </Text>
                 </TouchableOpacity>
 
                 {/* Footer Text */}
-                <Text className="text-center text-zinc-500 text-sm mt-4">
+                <Text className="text-center text-zinc-300 text-sm mt-4">
                   More translations coming soon
                 </Text>
 

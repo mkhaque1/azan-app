@@ -11,7 +11,10 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["audio", "remote-notification"],
+        "UIBackgroundModes": [
+          "audio",
+          "remote-notification"
+        ],
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to calculate the Qibla direction.",
         "NSLocationAlwaysUsageDescription": "This app needs access to your location to calculate the Qibla direction even when the app is in the background."
       }
@@ -51,10 +54,13 @@
         {
           "icon": "./assets/images/notifications.png",
           "color": "#f59e0b",
-          "sounds": ["./assets/sounds/azan.wav"],
+          "sounds": [
+            "./assets/sounds/azan.wav"
+          ],
           "mode": "production"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -65,6 +71,8 @@
         "projectId": "your-project-id-here"
       }
     },
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ]
   }
 }

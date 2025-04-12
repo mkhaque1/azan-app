@@ -160,12 +160,12 @@ export default function HomeScreen() {
     >
       <View className="flex-1 justify-center items-center bg-black/50 px-6">
         {/* Replace Ionicons with Lottie Animation */}
-        <LottieView
+        {/* <LottieView
           source={require('../assets/images/lottie-1.json')}
           autoPlay
           loop
           style={{ width: 150, height: 150 }}
-        />
+        /> */}
         <Text className="text-4xl font-semibold text-amber-600 mb-2 text-center">
           السلام عليكم
         </Text>
