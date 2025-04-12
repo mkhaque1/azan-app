@@ -7,17 +7,59 @@ import {
   ImageBackground,
   Dimensions,
 } from 'react-native';
-import { getNextPrayer } from './utils/prayerUtils';
+import { getNextPrayer } from '@utils/prayerUtils';
 import usePrayerTimes from './hooks/usePrayerTimes';
 import { parse } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { formatPrayerTime } from './utils/date';
+import { formatPrayerTime } from '@utils/date';
 import { Asset } from 'expo-asset';
 import LottieView from 'lottie-react-native';
+import Carousel from '@components/Carousel';
 
 const { height } = Dimensions.get('window');
 
 export default function HomeScreen() {
+  // State for carousel content
+  const [content, setContent] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch content for the carousel
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        // Use real or mock data
+        const mockContent = [
+          {
+            id: '1',
+            type: 'Quran',
+            content:
+              '“Indeed, prayer prohibits immorality and wrongdoing.”\n— [Quran 29:45]',
+          },
+          {
+            id: '2',
+            type: 'Hadith',
+            content:
+              '“The best among you are those who learn the Qur’an and teach it.”\n— Prophet Muhammad (ﷺ)',
+          },
+          {
+            id: '3',
+            type: 'Wisdom',
+            content:
+              '“And whoever puts their trust in Allah, He will be enough for them.”\n— [Quran 65:3]',
+          },
+        ];
+
+        setContent(mockContent);
+      } catch (error) {
+        console.error('Error setting mock data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
+
   // Preload image asset
   useEffect(() => {
     Asset.fromModule(require('../assets/images/home.jpg')).downloadAsync();
@@ -133,14 +175,10 @@ export default function HomeScreen() {
         <Text className="text-lg text-zinc-400 mb-10 text-center">
           Your daily prayer times, always on time.
         </Text>
-
-        <Link href="/PrayerDetailsScreen" asChild>
-          <TouchableOpacity className="bg-white rounded-xl px-6 py-3 shadow-lg">
-            <Text className="text-zinc-900 text-lg font-semibold">
-              Get Started
-            </Text>
-          </TouchableOpacity>
-        </Link>
+        {/* Carousel with Content */}
+        <View className="px-4 mt-2">
+          {!loading && <Carousel content={content} />}
+        </View>
 
         {nextPrayer && (
           <View className="bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-2 mt-6 w-[100%]">
@@ -155,6 +193,14 @@ export default function HomeScreen() {
             </Text>
           </View>
         )}
+
+        <Link href="/PrayerDetailsScreen" asChild>
+          <TouchableOpacity className="bg-white rounded-xl mt-6 px-6 py-3 shadow-lg">
+            <Text className="text-zinc-900 text-lg font-semibold">
+              Get Started
+            </Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </ImageBackground>
   );

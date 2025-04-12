@@ -6,51 +6,28 @@ import {
   Dimensions,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Cards from './components/Cards';
 import { Link } from 'expo-router';
 import Calendar from './components/Calendar';
-import Carousel from './components/Carousel';
+import ReadQuran from './components/ReadQuran'; // Import the ReadQuran component
 
 const { height } = Dimensions.get('window');
 
 export default function PrayerDetailsScreen() {
-  const [content, setContent] = useState<
-    { id: string; type: string; content: string }[]
-  >([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [showReadQuran, setShowReadQuran] = useState(false); // State to toggle ReadQuran
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        // Use mock data
-        const mockContent = [
-          {
-            id: '1',
-            type: 'Quran',
-            content:
-              '“Indeed, prayer prohibits immorality and wrongdoing.”\n— [Quran 29:45]',
-          },
-          {
-            id: '2',
-            type: 'Hadith',
-            content:
-              '“The best among you are those who learn the Qur’an and teach it.”\n— Prophet Muhammad (ﷺ)',
-          },
-          {
-            id: '3',
-            type: 'Wisdom',
-            content:
-              '“And whoever puts their trust in Allah, He will be enough for them.”\n— [Quran 65:3]',
-          },
-        ];
-
-        setContent(mockContent);
-      } catch (error) {
-        console.error('Error setting mock data:', error);
-      } finally {
+        // Simulate data fetching
         setLoading(false);
+      } catch (error) {
+        console.error('Error fetching content:', error);
       }
     };
 
@@ -91,21 +68,91 @@ export default function PrayerDetailsScreen() {
                 </Text>
               </TouchableOpacity>
             </Link>
+            <TouchableOpacity
+              className="bg-amber-500 rounded-xl px-6 py-4 shadow-lg mt-5"
+              activeOpacity={0.8}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text className="text-white text-lg font-semibold text-center">
+                Read Quran
+              </Text>
+            </TouchableOpacity>
           </View>
 
           <View className="mt-8">
             <Calendar />
           </View>
-
-          {/* Carousel with Mock Content */}
-          <View className="px-4">
-            <Carousel content={content} />
-          </View>
-
-          <Text className="text-center text-zinc-300 mt-6">
-            copyright &copy; 2025 khairul haque
-          </Text>
         </ScrollView>
+
+        {/* Modal for Quran Options */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(false);
+            setShowReadQuran(false); // Reset ReadQuran state when modal closes
+          }}
+        >
+          <View className="flex-1 justify-center items-center bg-black/50 px-6">
+            {showReadQuran ? (
+              // Render ReadQuran component
+              <ReadQuran />
+            ) : (
+              <View className="bg-white/90 rounded-lg p-6 w-full max-w-md">
+                <Text className="text-lg font-bold text-center mb-4">
+                  Select Quran Translation
+                </Text>
+
+                {/* Arabic Quran */}
+                <TouchableOpacity
+                  className="bg-amber-500/20 rounded-lg p-4 mb-4"
+                  activeOpacity={0.8}
+                >
+                  <Text className="text-amber-600 text-lg font-semibold text-center">
+                    Arabic Quran
+                  </Text>
+                </TouchableOpacity>
+
+                {/* English Quran */}
+                <TouchableOpacity
+                  className="bg-amber-500/20 rounded-lg p-4 mb-4"
+                  activeOpacity={0.8}
+                  onPress={() => setShowReadQuran(true)} // Show ReadQuran when clicked
+                >
+                  <Text className="text-amber-600 text-lg font-semibold text-center">
+                    English Quran
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Bengali Quran */}
+                <TouchableOpacity
+                  className="bg-amber-500/20 rounded-lg p-4 mb-4"
+                  activeOpacity={0.8}
+                >
+                  <Text className="text-amber-600 text-lg font-semibold text-center">
+                    Bengali Quran
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Footer Text */}
+                <Text className="text-center text-zinc-500 text-sm mt-4">
+                  More translations coming soon
+                </Text>
+
+                {/* Close Button */}
+                <TouchableOpacity
+                  className="bg-red-500 rounded-lg p-3 mt-6"
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text className="text-white text-center font-semibold">
+                    Close
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </Modal>
       </View>
     </ImageBackground>
   );

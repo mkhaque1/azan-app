@@ -64,6 +64,7 @@
       "eas": {
         "projectId": "your-project-id-here"
       }
-    }
+    },
+    "assetBundlePatterns": ["**/*"]
   }
 }

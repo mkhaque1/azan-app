@@ -1,0 +1,32 @@
+{
+  "hadith": [
+    {
+      "id": 1,
+      "text": "Actions are judged by intentions."
+    },
+    {
+      "id": 2,
+      "text": "The best among you are those who have the best manners and character."
+    }
+  ],
+  "quran": [
+    {
+      "id": 1,
+      "text": "Indeed, with hardship [will be] ease. (Quran 94:6)"
+    },
+    {
+      "id": 2,
+      "text": "So remember Me; I will remember you. (Quran 2:152)"
+    }
+  ],
+  "wisdomQuotes": [
+    {
+      "id": 1,
+      "text": "Knowledge is power."
+    },
+    {
+      "id": 2,
+      "text": "Patience is the key to success."
+    }
+  ]
+}
