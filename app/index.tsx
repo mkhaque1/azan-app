@@ -15,6 +15,7 @@ import { formatPrayerTime } from '@utils/date';
 import { Asset } from 'expo-asset';
 import LottieView from 'lottie-react-native';
 import Carousel from '@components/Carousel';
+import { MaterialIcons } from '@expo/vector-icons'; // Import fallback icon
 
 const { height } = Dimensions.get('window');
 
@@ -22,6 +23,9 @@ export default function HomeScreen() {
   // State for carousel content
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // State to track Lottie failure
+  const [lottieFailed, setLottieFailed] = useState(false);
 
   // Fetch content for the carousel
   useEffect(() => {
@@ -159,14 +163,25 @@ export default function HomeScreen() {
       style={{ height, width: '100%' }}
     >
       <View className="flex-1 justify-center items-center bg-black/50 px-6">
-        {/* Replace Ionicons with Lottie Animation */}
-        {/* <LottieView
-          source={require('../assets/images/lottie-1.json')}
-          autoPlay
-          loop
-          style={{ width: 150, height: 150 }}
-        /> */}
-        <Text className="text-4xl font-semibold text-amber-600 mb-2 text-center">
+        {/* Lottie Animation or Fallback Icon */}
+        {!lottieFailed ? (
+          <LottieView
+            source={require('../assets/images/lottie-1.json')}
+            autoPlay
+            loop
+            style={{ width: 150, height: 150 }}
+            onError={() => setLottieFailed(true)} // Set failure state if Lottie fails
+          />
+        ) : (
+          <MaterialIcons
+            name="error-outline"
+            size={100}
+            color="#fbbf24"
+            style={{ marginBottom: 10 }}
+          />
+        )}
+
+        <Text className="text-4xl font-semibold text-amber-500 mb-2 text-center">
           السلام عليكم
         </Text>
         <Text className="text-4xl font-semibold text-white mb-4 text-center">
@@ -175,13 +190,14 @@ export default function HomeScreen() {
         <Text className="text-lg text-zinc-400 mb-10 text-center">
           Your daily prayer times, always on time.
         </Text>
+
         {/* Carousel with Content */}
         <View className="px-4 mt-2">
           {!loading && <Carousel content={content} />}
         </View>
 
         {nextPrayer && (
-          <View className="bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-2 mt-6 w-[100%]">
+          <View className="bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-2 mt-6 w-[80%]">
             <Text className="text-center text-amber-400 text-sm font-medium">
               Next: <Text className="font-bold">{nextPrayer.name}</Text> at{' '}
               {formatPrayerTime(nextPrayer.time)}

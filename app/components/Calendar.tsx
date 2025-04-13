@@ -1,14 +1,24 @@
-import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
 import React, { useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Easing,
+  Modal,
+} from 'react-native';
 import moment from 'moment';
 import 'moment-hijri';
 import { useCalendar } from '../context/CalendarContext';
+import HolidayList from './HolidayList'; // Import HolidayList component
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const Calendar = () => {
   const { useHijri } = useCalendar();
   const [currentDate, setCurrentDate] = useState(moment());
+  const [selectedDay, setSelectedDay] = useState<string | null>(null); // Track selected day
+  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
   const slideAnim = useRef(new Animated.Value(0)).current; // Animation value
 
   const isHijri = useHijri;
@@ -85,6 +95,16 @@ const Calendar = () => {
   };
 
   const today = moment().format(isHijri ? 'iD' : 'D');
+
+  const openModal = (day: string) => {
+    setSelectedDay(day); // Set the selected day
+    setModalVisible(true); // Open the modal
+  };
+
+  const closeModal = () => {
+    setModalVisible(false); // Close the modal
+    setSelectedDay(null); // Reset the selected day
+  };
 
   return (
     <View
@@ -174,12 +194,41 @@ const Calendar = () => {
                 fontSize: 16,
                 fontWeight: day === today ? 'bold' : 'normal',
               }}
+              onPress={() => openModal(day)} // Open modal on day press
             >
               {day}
             </Text>
           </View>
         ))}
       </Animated.View>
+
+      {/* Modal for Holiday List */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50 px-6">
+          <View className="bg-white rounded-lg p-6 w-full max-w-md">
+            <TouchableOpacity
+              onPress={closeModal}
+              className="absolute top-4 right-4 z-10"
+            >
+              <Text style={{ fontSize: 18, color: 'red' }}>Close</Text>
+            </TouchableOpacity>
+            <HolidayList
+              selectedDay={selectedDay}
+              selectedMonth={
+                isHijri
+                  ? currentDate.format('iMMMM')
+                  : currentDate.format('MMMM')
+              }
+            />{' '}
+            {/* Render HolidayList */}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
