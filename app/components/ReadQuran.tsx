@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,6 +18,8 @@ const ReadQuran: React.FC<ReadQuranProps> = ({ onClose, content }) => {
   const [currentSurahIndex, setCurrentSurahIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [surahs, setSurahs] = useState<any[]>([]);
+
+  const { height } = Dimensions.get('window'); // Get screen height
 
   useEffect(() => {
     setSurahs(content);
@@ -47,7 +50,10 @@ const ReadQuran: React.FC<ReadQuranProps> = ({ onClose, content }) => {
   const currentSurah = surahs[currentSurahIndex];
 
   return (
-    <View className="flex-1 w-full bg-zinc-800 rounded-lg p-6 m-4">
+    <View
+      style={{ height: height * 0.7 }} // Set height to 80% of the screen
+      className="w-full bg-zinc-800 rounded-lg p-6 m-4"
+    >
       {/* Close Button */}
       <TouchableOpacity
         onPress={onClose}
@@ -58,7 +64,7 @@ const ReadQuran: React.FC<ReadQuranProps> = ({ onClose, content }) => {
 
       {/* Surah Title */}
       <Text className="text-2xl text-white font-bold text-center mb-4">
-        {currentSurah.surah_name} {currentSurah?.surah || currentSurahIndex + 1}
+        Surah - {currentSurah.surah_name}
       </Text>
 
       {/* Surah Content */}
@@ -67,7 +73,9 @@ const ReadQuran: React.FC<ReadQuranProps> = ({ onClose, content }) => {
           <Text
             className={`${
               content === require('../../assets/quran/arabicquran.json')
-                ? 'font-[ScheherazadeNew] text-white tracking-[3px]'
+                ? ' font-arabic text-white tracking-[3px] text-right'
+                : content === require('../../assets/quran/banglaquran.json')
+                ? 'font-bangla text-white'
                 : 'text-white'
             } text-lg font-light`}
           >

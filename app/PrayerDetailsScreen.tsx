@@ -150,7 +150,12 @@ export default function PrayerDetailsScreen() {
                   className="bg-amber-500/20 rounded-lg p-4 mb-4"
                   activeOpacity={0.8}
                 >
-                  <Text className="text-amber-500 text-lg font-semibold text-center">
+                  <Text
+                    className="text-amber-500 text-lg font-semibold text-center"
+                    onPress={() =>
+                      openQuran(require('../assets/quran/banglaquran.json'))
+                    }
+                  >
                     Bengali Quran
                   </Text>
                 </TouchableOpacity>
