@@ -9,30 +9,30 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import 'moment-hijri';
-import { useCalendar } from '../context/CalendarContext';
-import HolidayList from './HolidayList'; // Import HolidayList component
+import { useCalendar } from '../context/CalendarContext'; // Correct import
+import HolidayList from './HolidayList';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const Calendar = () => {
-  const { useHijri } = useCalendar();
+  const { useHijri } = useCalendar(); // Get the useHijri state from context
   const [currentDate, setCurrentDate] = useState(moment());
-  const [selectedDay, setSelectedDay] = useState<string | null>(null); // Track selected day
-  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
-  const slideAnim = useRef(new Animated.Value(0)).current; // Animation value
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
-  const isHijri = useHijri;
+  const isHijri = useHijri; // Use the context value to toggle between calendars
   const monthName = isHijri
-    ? currentDate.format('iMMMM iYYYY')
-    : currentDate.format('MMMM YYYY');
+    ? currentDate.format('iMMMM iYYYY') // Arabic (Hijri) month name
+    : currentDate.format('MMMM YYYY'); // English month name
 
   const firstDay = isHijri
-    ? moment(currentDate).startOf('iMonth')
-    : moment(currentDate).startOf('month');
+    ? moment(currentDate).startOf('iMonth') // Start of Hijri month
+    : moment(currentDate).startOf('month'); // Start of Gregorian month
 
   const daysInMonth = isHijri
-    ? firstDay.iDaysInMonth()
-    : firstDay.daysInMonth();
+    ? firstDay.iDaysInMonth() // Days in Hijri month
+    : firstDay.daysInMonth(); // Days in Gregorian month
 
   const startDayOfWeek = isHijri
     ? moment(firstDay).weekday() || 0
@@ -41,20 +41,22 @@ const Calendar = () => {
   const allDays = Array(startDayOfWeek)
     .fill('')
     .concat(
-      Array.from({ length: daysInMonth }, (_, i) =>
-        isHijri
-          ? moment(firstDay)
-              .iDate(i + 1)
-              .format('iD')
-          : moment(firstDay)
-              .date(i + 1)
-              .format('D')
+      Array.from(
+        { length: daysInMonth },
+        (_, i) =>
+          isHijri
+            ? moment(firstDay)
+                .iDate(i + 1)
+                .format('iD') // Hijri day
+            : moment(firstDay)
+                .date(i + 1)
+                .format('D') // Gregorian day
       )
     );
 
   const goToNextMonth = () => {
     Animated.timing(slideAnim, {
-      toValue: -300, // Slide left
+      toValue: -300,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: true,
@@ -62,7 +64,7 @@ const Calendar = () => {
       setCurrentDate((prev) =>
         isHijri ? moment(prev).add(1, 'iMonth') : moment(prev).add(1, 'month')
       );
-      slideAnim.setValue(300); // Reset position
+      slideAnim.setValue(300);
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
@@ -74,7 +76,7 @@ const Calendar = () => {
 
   const goToPrevMonth = () => {
     Animated.timing(slideAnim, {
-      toValue: 300, // Slide right
+      toValue: 300,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: true,
@@ -84,7 +86,7 @@ const Calendar = () => {
           ? moment(prev).subtract(1, 'iMonth')
           : moment(prev).subtract(1, 'month')
       );
-      slideAnim.setValue(-300); // Reset position
+      slideAnim.setValue(-300);
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
@@ -97,13 +99,13 @@ const Calendar = () => {
   const today = moment().format(isHijri ? 'iD' : 'D');
 
   const openModal = (day: string) => {
-    setSelectedDay(day); // Set the selected day
-    setModalVisible(true); // Open the modal
+    setSelectedDay(day);
+    setModalVisible(true);
   };
 
   const closeModal = () => {
-    setModalVisible(false); // Close the modal
-    setSelectedDay(null); // Reset the selected day
+    setModalVisible(false);
+    setSelectedDay(null);
   };
 
   return (
@@ -159,27 +161,27 @@ const Calendar = () => {
         ))}
       </View>
 
-      {/* Calendar Grid with Animation */}
+      {/* Calendar Grid */}
       <Animated.View
         style={{
           flexDirection: 'row',
           flexWrap: 'wrap',
           transform: [{ translateX: slideAnim }],
-          justifyContent: 'space-between', // Ensure proper spacing
+          justifyContent: 'space-between',
         }}
       >
         {allDays.map((day, index) => (
           <View
             key={index}
             style={{
-              width: '13%', // Ensure 7 columns fit in the row
+              width: '13%',
               height: 48,
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: 8,
               backgroundColor:
                 day === today
-                  ? '#FFA000' // Highlight current day
+                  ? '#FFA000'
                   : day
                   ? 'rgba(255, 255, 255, 0.1)'
                   : 'transparent',
@@ -194,7 +196,7 @@ const Calendar = () => {
                 fontSize: 16,
                 fontWeight: day === today ? 'bold' : 'normal',
               }}
-              onPress={() => openModal(day)} // Open modal on day press
+              onPress={() => openModal(day)}
             >
               {day}
             </Text>
@@ -224,8 +226,7 @@ const Calendar = () => {
                   ? currentDate.format('iMMMM')
                   : currentDate.format('MMMM')
               }
-            />{' '}
-            {/* Render HolidayList */}
+            />
           </View>
         </View>
       </Modal>

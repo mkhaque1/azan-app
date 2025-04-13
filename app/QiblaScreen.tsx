@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 const MAKKAH_LAT = 21.4225;
 const MAKKAH_LON = 39.8262;
 
-const QiblaScreen = () => {
+const Qibla = () => {
   const [location, setLocation] =
     useState<Location.LocationObjectCoords | null>(null);
   const [heading, setHeading] = useState(0);
@@ -110,4 +110,4 @@ const QiblaScreen = () => {
   );
 };
 
-export default QiblaScreen;
+export default Qibla;

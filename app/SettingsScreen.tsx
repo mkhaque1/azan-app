@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   Text,
@@ -7,25 +8,30 @@ import {
   Switch,
   Alert,
   Share,
+  Modal,
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av'; // Import Audio API
+import { useSettings } from '../context/SettingsContext';
 
 const azanOptions = [
-  'Adhan Makkah',
-  'Adhan Madinah',
-  'Adhan Egypt',
-  'Adhan Turkey',
-  'Adhan Indonesia',
+  { name: 'Adhan Makkah', file: require('../assets/sounds/azan1.mp3') },
+  { name: 'Adhan Madinah', file: require('../assets/sounds/azan2.mp3') },
+  { name: 'Adhan Egypt', file: require('../assets/sounds/azan3.mp3') },
+  { name: 'Adhan Turkey', file: require('../assets/sounds/azan4.mp3') },
+  { name: 'Adhan Indonesia', file: null },
 ];
 
 export default function SettingsScreen() {
-  const [calendarArabic, setCalendarArabic] = useState(true);
-  const [selectedAzan, setSelectedAzan] = useState('Adhan Makkah');
+  const { calendarArabic, setCalendarArabic } = useSettings();
+  const [selectedAzan, setSelectedAzan] = useState<string>('Adhan Makkah');
   const [location, setLocation] = useState<string | null>(null);
   const [country, setCountry] = useState<string | null>(null);
+  const [sound, setSound] = useState<Audio.Sound | null>(null); // State for audio playback
+  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
 
   useEffect(() => {
     (async () => {
@@ -39,13 +45,43 @@ export default function SettingsScreen() {
         setCountry(reverse[0].country);
       }
     })();
-  }, []);
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync(); // Unload sound when the component unmounts
+      }
+    };
+  }, [sound]);
+
+  const handlePlaySound = async (file: any) => {
+    if (!file) {
+      Alert.alert('Sound not available', 'This Azan sound is not yet added.');
+      return;
+    }
+
+    try {
+      // Unload the previous sound if it exists
+      if (sound) {
+        await sound.unloadAsync();
+        setSound(null);
+      }
+
+      // Create and load the new sound
+      const { sound: newSound } = await Audio.Sound.createAsync(file);
+      setSound(newSound);
+
+      await newSound.playAsync(); // Play the sound
+    } catch (error) {
+      console.error('Error playing sound:', error);
+      Alert.alert('Error', 'Failed to play the sound. Please try again.');
+    }
+  };
 
   const handleShare = async () => {
     try {
       await Share.share({
         message:
-          'Check out this beautiful Azan App! 🕌\nDownload now: [Your App Link]',
+          'Check out this beautiful Azan App! 🕌\nDownload now: Azan-App',
       });
     } catch (error) {
       Alert.alert('Error sharing', (error as Error).message);
@@ -74,6 +110,94 @@ export default function SettingsScreen() {
         </Text>
       </View>
 
+      {/* About Section */}
+      <View className="bg-white/10 p-4 rounded-2xl mb-6 border border-white/10">
+        <Text className="text-white text-base mb-2">About</Text>
+        <Text className="text-zinc-300 text-sm">
+          This app is designed to provide you with the best Azan experience.
+          Enjoy the beautiful sounds of Azan from different regions.
+        </Text>
+      </View>
+
+      {/* Azan Sound Picker */}
+      <View className="bg-white/10 p-4 rounded-2xl mb-6 border border-white/10">
+        <Text className="text-white text-base mb-2">Azan Sound</Text>
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)} // Open modal
+          className="bg-amber-500 p-3 rounded-xl"
+        >
+          <Text className="text-white text-center font-bold">
+            Set Azan Sound
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal for Azan Sound Picker */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)} // Close modal
+      >
+        <View className="flex-1 justify-center items-center bg-black/50 px-6">
+          <View className="bg-white rounded-lg p-6 w-full max-w-md">
+            {/* Modal Header */}
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-lg font-bold text-black">
+                Set Azan Sound
+              </Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Ionicons name="close" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Azan Options */}
+            {azanOptions.map((option, index) => (
+              <View
+                key={index}
+                className="flex-row items-center justify-between mb-2"
+              >
+                {/* Play Button */}
+                <TouchableOpacity
+                  onPress={() => handlePlaySound(option.file)}
+                  className="p-3 rounded-xl bg-[#fc9104] mr-2"
+                >
+                  <Ionicons name="play" size={20} color="white" />
+                </TouchableOpacity>
+
+                {/* Azan Option */}
+                <TouchableOpacity
+                  onPress={() => {
+                    if (index >= 2) {
+                      // Show alert for restricted Azan options (3, 4, 5)
+                      Alert.alert(
+                        'Become a Pro User',
+                        'This Azan sound is available for Pro Users only. Payment functionality will be added soon!'
+                      );
+                    } else {
+                      // Allow setting Azan for free options (1, 2)
+                      setSelectedAzan(option.name);
+                    }
+                  }}
+                  className="flex-1 flex-row items-center justify-between p-3 rounded-xl bg-[#fff1c5]"
+                >
+                  <Text className="text-sm text-black">{option.name}</Text>
+
+                  {/* Checkbox Icon */}
+                  {selectedAzan === option.name && (
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={20}
+                      color="#10b981"
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
       {/* Calendar Toggle */}
       <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
         <Text className="text-white text-base">Use Arabic Calendar</Text>
@@ -85,28 +209,20 @@ export default function SettingsScreen() {
         />
       </View>
 
-      {/* Azan Sound Picker */}
-      <View className="bg-white/10 p-4 rounded-2xl mb-6 border border-white/10">
-        <Text className="text-white text-base mb-2">Choose Azan Sound</Text>
-        {azanOptions.map((option, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => setSelectedAzan(option)}
-            className={`p-3 rounded-xl mb-2 ${
-              selectedAzan === option ? 'bg-emerald-600' : 'bg-white/10'
-            }`}
-          >
-            <Text
-              className={`text-sm ${
-                selectedAzan === option
-                  ? 'text-white font-bold'
-                  : 'text-zinc-300'
-              }`}
-            >
-              {option}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
+        <Text className="text-white text-base">Track your prayer</Text>
+        <Switch
+          thumbColor="#fff"
+          trackColor={{ true: '#10b981', false: '#6b7280' }}
+          onValueChange={(value) => {
+            if (value) {
+              Alert.alert(
+                'Become a Pro User',
+                'Unlock this feature by becoming a Pro User. Payment functionality will be added soon!'
+              );
+            }
+          }}
+        />
       </View>
 
       {/* Share Button */}
