@@ -124,24 +124,11 @@ export default function PrayerDetailsScreen() {
                   className="bg-amber-500/20 rounded-lg p-4 mb-4"
                   activeOpacity={0.8}
                   onPress={() =>
-                    openQuran(require('../assets/quran/arabicquran.json'))
+                    openQuran(require('../assets/quran/merged-ar-en.json'))
                   }
                 >
                   <Text className="text-amber-500 text-lg font-semibold text-center">
-                    Arabic Quran
-                  </Text>
-                </TouchableOpacity>
-
-                {/* English Quran */}
-                <TouchableOpacity
-                  className="bg-amber-500/20 rounded-lg p-4 mb-4"
-                  activeOpacity={0.8}
-                  onPress={() =>
-                    openQuran(require('../assets/quran/englishquran.json'))
-                  }
-                >
-                  <Text className="text-amber-500 text-lg font-semibold text-center">
-                    English Quran
+                    Arabic + English Quran
                   </Text>
                 </TouchableOpacity>
 

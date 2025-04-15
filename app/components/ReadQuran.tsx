@@ -72,16 +72,20 @@ const ReadQuran: React.FC<ReadQuranProps> = ({ onClose, content }) => {
         {currentSurah?.ayahs?.length > 0 ? (
           <Text
             className={`${
-              content === require('../../assets/quran/arabicquran.json')
-                ? ' font-arabic text-white tracking-[3px] text-right'
+              content === require('../../assets/quran/merged-ar-en.json')
+                ? ' font-arabic text-white tracking-[2px] text-right'
                 : content === require('../../assets/quran/banglaquran.json')
                 ? 'font-bangla text-white'
                 : 'text-white'
             } text-lg font-light`}
           >
-            {currentSurah.ayahs
-              .map((a: any) => `${a.ayah}. ${a.text}`)
-              .join('\n\n')}
+            {content === require('../../assets/quran/banglaquran.json')
+              ? currentSurah.ayahs
+                  .map((a: any) => `${a.ayah}. ${a.text}`) // Bengali Quran
+                  .join('\n\n')
+              : currentSurah.ayahs
+                  .map((a: any) => `${a.ayah}. ${a.arabic}\n${a.english}`) // Merged Quran
+                  .join('\n\n')}
           </Text>
         ) : (
           <Text className="text-white text-center">
