@@ -16,6 +16,8 @@ import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'; // Import Audio API
 import { useSettings } from '../context/SettingsContext';
+import Member from '@components/Member';
+import Notice from '@components/Notice';
 
 const azanOptions = [
   { name: 'Adhan Makkah', file: require('../assets/sounds/azan1.mp3') },
@@ -32,6 +34,8 @@ export default function SettingsScreen() {
   const [country, setCountry] = useState<string | null>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null); // State for audio playback
   const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
+  const [isMemberPopupVisible, setIsMemberPopupVisible] = useState(false); // State for Member popup visibility
+  const [noticeVisible, setNoticeVisible] = useState(false); // State for Notice visibility
 
   useEffect(() => {
     (async () => {
@@ -101,7 +105,6 @@ export default function SettingsScreen() {
           Version {Constants.expoConfig?.version || '1.0.0'}
         </Text>
       </View>
-
       {/* Location */}
       <View className="bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
         <Text className="text-white text-base">Current Location:</Text>
@@ -109,7 +112,6 @@ export default function SettingsScreen() {
           {location || 'Fetching...'}, {country || ''}
         </Text>
       </View>
-
       {/* About Section */}
       <View className="bg-white/10 p-4 rounded-2xl mb-6 border border-white/10">
         <Text className="text-white text-base mb-2">About</Text>
@@ -118,7 +120,6 @@ export default function SettingsScreen() {
           Enjoy the beautiful sounds of Azan from different regions.
         </Text>
       </View>
-
       {/* Azan Sound Picker */}
       <View className="bg-white/10 p-4 rounded-2xl mb-6 border border-white/10">
         <Text className="text-white text-base mb-2">Azan Sound</Text>
@@ -131,11 +132,17 @@ export default function SettingsScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-
+      {/* Notice */}
+      {noticeVisible && (
+        <Notice
+          message="Please subscribe to unlock this feature."
+          onClose={() => setNoticeVisible(false)} // Hide the Notice
+        />
+      )}
       {/* Modal for Azan Sound Picker */}
       <Modal
         visible={modalVisible}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setModalVisible(false)} // Close modal
       >
@@ -169,14 +176,9 @@ export default function SettingsScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     if (index >= 2) {
-                      // Show alert for restricted Azan options (3, 4, 5)
-                      Alert.alert(
-                        'Become a Pro User',
-                        'This Azan sound is available for Pro Users only. Payment functionality will be added soon!'
-                      );
+                      setNoticeVisible(true);
                     } else {
-                      // Allow setting Azan for free options (1, 2)
-                      setSelectedAzan(option.name);
+                      setSelectedAzan(option.name); // Allow setting Azan for free options
                     }
                   }}
                   className="flex-1 flex-row items-center justify-between p-3 rounded-xl bg-[#fff1c5]"
@@ -197,7 +199,6 @@ export default function SettingsScreen() {
           </View>
         </View>
       </Modal>
-
       {/* Calendar Toggle */}
       <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
         <Text className="text-white text-base">Use Arabic Calendar</Text>
@@ -208,22 +209,39 @@ export default function SettingsScreen() {
           trackColor={{ true: '#10b981', false: '#6b7280' }}
         />
       </View>
-
+      {/* Track Your Prayer Toggle */}
       <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
         <Text className="text-white text-base">Track your prayer</Text>
         <Switch
+          value={false} // Default value
+          onValueChange={() => setNoticeVisible(true)} // Show Member popup
           thumbColor="#fff"
           trackColor={{ true: '#10b981', false: '#6b7280' }}
-          onValueChange={(value) => {
-            if (value) {
-              Alert.alert(
-                'Become a Pro User',
-                'Unlock this feature by becoming a Pro User. Payment functionality will be added soon!'
-              );
-            }
-          }}
         />
       </View>
+
+      {/* Trigger Member Popup */}
+      <TouchableOpacity
+        onPressIn={() => setIsMemberPopupVisible(true)} // Show the Member popup
+        className="bg-white/10 p-6 rounded-2xl mb-4 border border-white/10"
+      >
+        <Text className="text-white text-center  font-bold">
+          Become a Pro Member
+        </Text>
+      </TouchableOpacity>
+      {/* Member Popup */}
+      {isMemberPopupVisible && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isMemberPopupVisible}
+          onRequestClose={() => setIsMemberPopupVisible(false)} // Close popup
+        >
+          <View className="flex-1 justify-center items-center bg-black/50 px-6">
+            <Member onClose={() => setIsMemberPopupVisible(false)} />
+          </View>
+        </Modal>
+      )}
 
       {/* Share Button */}
       <TouchableOpacity
@@ -235,7 +253,6 @@ export default function SettingsScreen() {
           Share this app with friends
         </Text>
       </TouchableOpacity>
-
       {/* Footer */}
       <View className="items-center pb-6">
         <Text className="text-zinc-500 text-sm">
