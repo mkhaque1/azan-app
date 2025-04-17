@@ -22,7 +22,7 @@ const Subscribe = ({ onClose }: { onClose: () => void }) => {
               #1 Namaz app
             </Text>
             <Text className="text-white text-sm">
-              ⭐⭐⭐⭐⭐ 10+ million 🌍
+              ⭐⭐⭐⭐⭐ 1000+ download 🌍
             </Text>
           </View>
 
@@ -50,7 +50,7 @@ const Subscribe = ({ onClose }: { onClose: () => void }) => {
               key={key}
               className={`rounded-xl p-4 mb-4 border ${
                 selectedPlan === key
-                  ? 'bg-amber-500 border-amber-700'
+                  ? 'bg-amber-500 border-amber-900'
                   : 'bg-amber-700 border-amber-600'
               }`}
               onPress={() =>

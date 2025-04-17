@@ -36,6 +36,8 @@ export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
   const [isMemberPopupVisible, setIsMemberPopupVisible] = useState(false); // State for Member popup visibility
   const [noticeVisible, setNoticeVisible] = useState(false); // State for Notice visibility
+  const [pushNotificationsEnabled, setPushNotificationsEnabled] =
+    useState(false);
 
   useEffect(() => {
     (async () => {
@@ -205,6 +207,16 @@ export default function SettingsScreen() {
         <Switch
           value={calendarArabic}
           onValueChange={setCalendarArabic}
+          thumbColor="#fff"
+          trackColor={{ true: '#10b981', false: '#6b7280' }}
+        />
+      </View>
+      {/* Push Notification Toggle */}
+      <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
+        <Text className="text-white text-base">Push Notifications</Text>
+        <Switch
+          value={pushNotificationsEnabled} // State to track toggle
+          onValueChange={(value) => setPushNotificationsEnabled(value)} // Update state
           thumbColor="#fff"
           trackColor={{ true: '#10b981', false: '#6b7280' }}
         />
