@@ -18,6 +18,7 @@ import { Audio } from 'expo-av'; // Import Audio API
 import { useSettings } from '../context/SettingsContext';
 import Member from '@components/Member';
 import Notice from '@components/Notice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const azanOptions = [
   { name: 'Adhan Makkah', file: require('../assets/sounds/azan1.mp3') },
@@ -59,6 +60,17 @@ export default function SettingsScreen() {
     };
   }, [sound]);
 
+  useEffect(() => {
+    const loadSelectedAzan = async () => {
+      const savedAzan = await AsyncStorage.getItem('selectedAzan');
+      if (savedAzan) {
+        setSelectedAzan(savedAzan); // Load the saved Azan sound
+      }
+    };
+
+    loadSelectedAzan();
+  }, []);
+
   const handlePlaySound = async (file: any) => {
     if (!file) {
       Alert.alert('Sound not available', 'This Azan sound is not yet added.');
@@ -81,6 +93,12 @@ export default function SettingsScreen() {
       console.error('Error playing sound:', error);
       Alert.alert('Error', 'Failed to play the sound. Please try again.');
     }
+  };
+
+  const handleSelectAzan = async (name: string) => {
+    setSelectedAzan(name); // Update the selected Azan in state
+    await AsyncStorage.setItem('selectedAzan', name); // Save the selected Azan persistently
+    Alert.alert('Azan Sound Selected', `You selected ${name}`);
   };
 
   const handleShare = async () => {
@@ -146,7 +164,13 @@ export default function SettingsScreen() {
         visible={modalVisible}
         animationType="fade"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)} // Close modal
+        onRequestClose={async () => {
+          setModalVisible(false); // Close the modal
+          if (sound) {
+            await sound.unloadAsync(); // Unload the sound
+            setSound(null); // Reset the sound state
+          }
+        }}
       >
         <View className="flex-1 justify-center items-center bg-black/50 px-6">
           <View className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -155,7 +179,15 @@ export default function SettingsScreen() {
               <Text className="text-lg font-bold text-black">
                 Set Azan Sound
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity
+                onPress={async () => {
+                  setModalVisible(false); // Close the modal
+                  if (sound) {
+                    await sound.unloadAsync(); // Unload the sound
+                    setSound(null); // Reset the sound state
+                  }
+                }}
+              >
                 <Ionicons name="close" size={24} color="black" />
               </TouchableOpacity>
             </View>
@@ -180,7 +212,7 @@ export default function SettingsScreen() {
                     if (index >= 2) {
                       setNoticeVisible(true);
                     } else {
-                      setSelectedAzan(option.name); // Allow setting Azan for free options
+                      handleSelectAzan(option.name); // Save the selected Azan
                     }
                   }}
                   className="flex-1 flex-row items-center justify-between p-3 rounded-xl bg-[#fff1c5]"

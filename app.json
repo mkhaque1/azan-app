@@ -11,10 +11,17 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["audio", "remote-notification"],
+        "UIBackgroundModes": [
+          "audio",
+          "remote-notification",
+          "audio",
+          "remote-notification"
+        ],
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to calculate the Qibla direction.",
-        "NSLocationAlwaysUsageDescription": "This app needs access to your location to calculate the Qibla direction even when the app is in the background."
-      }
+        "NSLocationAlwaysUsageDescription": "This app needs access to your location to calculate the Qibla direction even when the app is in the background.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.mkhaque4321.azanapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +35,8 @@
         "android.permission.VIBRATE",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "package": "com.mkhaque4321.azanapp"
     },
     "web": {
       "bundler": "metro",
@@ -51,7 +59,12 @@
         {
           "icon": "./assets/images/notifications.png",
           "color": "#f59e0b",
-          "sounds": ["./assets/sounds/azan.wav"],
+          "sounds": [
+            "./assets/sounds/azan1.mp3",
+            "./assets/sounds/azan2.mp3",
+            "./assets/sounds/azan3.mp3",
+            "./assets/sounds/azan4.mp3"
+          ],
           "mode": "production"
         }
       ],
@@ -62,10 +75,14 @@
       "tsconfigPaths": true
     },
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "your-project-id-here"
+        "projectId": "a598a088-2de6-47f8-9fdd-743ade778ed1"
       }
     },
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": ["**/*"],
+    "owner": "mkhaque4321"
   }
 }
