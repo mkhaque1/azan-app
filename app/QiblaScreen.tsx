@@ -85,7 +85,7 @@ const Qibla = () => {
 
   return (
     <View className="flex-1 bg-zinc-300 justify-center items-center">
-      <Text className="text-amber-800 text-3xl font-bold mb-8">
+      <Text className="text-amber-700 text-3xl font-bold mb-8">
         Qibla Compass
       </Text>
       <View className="relative justify-center items-center">
@@ -104,7 +104,7 @@ const Qibla = () => {
         Qibla is {Math.round(qiblaAngle)}° from North
       </Text>
       {city && (
-        <Text className="text-zinc-900 text-4xl font-bold mt-2">{city}</Text>
+        <Text className="text-zinc-700 text-4xl font-bold mt-2">{city}</Text>
       )}
     </View>
   );

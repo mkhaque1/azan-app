@@ -62,7 +62,9 @@ export default function HomeScreen() {
 
   // Preload image asset
   useEffect(() => {
-    Asset.fromModule(require('../assets/images/home.jpg')).downloadAsync();
+    Asset.fromModule(
+      require('../assets/images/arabic-texture.jpg')
+    ).downloadAsync();
   }, []);
 
   // 1. Fetch prayer times
@@ -153,7 +155,7 @@ export default function HomeScreen() {
   // Main render
   return (
     <ImageBackground
-      source={require('../assets/images/background.jpg')}
+      source={require('../assets/images/header.jpg')}
       resizeMode="cover"
       className="flex-1"
       style={{ height, width: '100%' }}
@@ -173,7 +175,7 @@ export default function HomeScreen() {
         <Text className="text-4xl font-semibold text-white mb-4 text-center">
           Welcome to Azan App
         </Text>
-        <Text className="text-lg text-zinc-400 mb-10 text-center">
+        <Text className="text-lg text-zinc-300 mb-10 text-center">
           Your daily prayer times, always on time.
         </Text>
 

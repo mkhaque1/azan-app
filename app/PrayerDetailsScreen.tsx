@@ -56,7 +56,7 @@ export default function PrayerDetailsScreen() {
 
   return (
     <ImageBackground
-      source={require('../assets/images/home.jpg')}
+      source={require('../assets/images/background.jpg')}
       resizeMode="cover"
       className="flex-1"
       style={{ height }}

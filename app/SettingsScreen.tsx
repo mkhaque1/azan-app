@@ -231,6 +231,18 @@ export default function SettingsScreen() {
           trackColor={{ true: '#10b981', false: '#6b7280' }}
         />
       </View>
+      {/* Track Quran Toggle */}
+      <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
+        <Text className="text-white text-base">Track Quran</Text>
+        <Switch
+          value={false} // Default value
+          onValueChange={() =>
+            Alert.alert('Track Quran', 'Features are coming soon')
+          } // Show alert
+          thumbColor="#fff"
+          trackColor={{ true: '#10b981', false: '#6b7280' }}
+        />
+      </View>
 
       {/* Trigger Member Popup */}
       <TouchableOpacity

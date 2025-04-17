@@ -7,6 +7,7 @@ module.exports = {
       fontFamily: {
         arabic: ['ScheherazadeNew-Regular', 'serif'], // Arabic font
         bangla: ['NotoSansBengali-VariableFont_wdth,wght', 'sans-serif'], // Bangla font
+        english: ['Inter-VariableFont_opsz,wght', 'sans-serif'], // English font
       },
     },
   },
