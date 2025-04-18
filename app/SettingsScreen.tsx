@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'; // Import Audio API
@@ -37,6 +38,7 @@ export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
   const [isMemberPopupVisible, setIsMemberPopupVisible] = useState(false); // State for Member popup visibility
   const [noticeVisible, setNoticeVisible] = useState(false); // State for Notice visibility
+  const [locationEnabled, setLocationEnabled] = useState(false);
   const [pushNotificationsEnabled, setPushNotificationsEnabled] =
     useState(false);
 
@@ -109,6 +111,93 @@ export default function SettingsScreen() {
       });
     } catch (error) {
       Alert.alert('Error sharing', (error as Error).message);
+    }
+  };
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const savedAzan = await AsyncStorage.getItem('selectedAzan');
+        if (savedAzan) {
+          setSelectedAzan(savedAzan);
+        }
+
+        const savedLocationEnabled = await AsyncStorage.getItem(
+          'locationEnabled'
+        );
+        setLocationEnabled(savedLocationEnabled === 'true');
+
+        const savedPushNotificationsEnabled = await AsyncStorage.getItem(
+          'pushNotificationsEnabled'
+        );
+        setPushNotificationsEnabled(savedPushNotificationsEnabled === 'true');
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  const handleLocationToggle = async (value: boolean) => {
+    setLocationEnabled(value);
+    await AsyncStorage.setItem('locationEnabled', value.toString());
+
+    if (value) {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permission Denied',
+            'Location permission is required to fetch your current location.'
+          );
+          setLocationEnabled(false);
+          await AsyncStorage.setItem('locationEnabled', 'false');
+          return;
+        }
+
+        const loc = await Location.getCurrentPositionAsync({});
+        const reverse = await Location.reverseGeocodeAsync(loc.coords);
+        if (reverse.length > 0) {
+          setLocation(reverse[0].city || reverse[0].region);
+          setCountry(reverse[0].country);
+        }
+      } catch (error) {
+        console.error('Error fetching location:', error);
+        Alert.alert('Error', 'Failed to fetch location. Please try again.');
+        setLocationEnabled(false);
+        await AsyncStorage.setItem('locationEnabled', 'false');
+      }
+    } else {
+      setLocation(null);
+      setCountry(null);
+    }
+  };
+
+  const handlePushNotificationsToggle = async (value: boolean) => {
+    setPushNotificationsEnabled(value);
+    await AsyncStorage.setItem('pushNotificationsEnabled', value.toString());
+
+    if (value) {
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permission Denied',
+            'Notification permission is required to enable push notifications.'
+          );
+          setPushNotificationsEnabled(false);
+          await AsyncStorage.setItem('pushNotificationsEnabled', 'false');
+        }
+      } catch (error) {
+        console.error('Error requesting notification permissions:', error);
+        Alert.alert(
+          'Error',
+          'Failed to enable push notifications. Please try again.'
+        );
+        setPushNotificationsEnabled(false);
+        await AsyncStorage.setItem('pushNotificationsEnabled', 'false');
+      }
     }
   };
 
@@ -243,12 +332,22 @@ export default function SettingsScreen() {
           trackColor={{ true: '#10b981', false: '#6b7280' }}
         />
       </View>
+      {/* Location Toggle */}
+      <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
+        <Text className="text-white text-base">Enable Location</Text>
+        <Switch
+          value={locationEnabled}
+          onValueChange={handleLocationToggle}
+          thumbColor="#fff"
+          trackColor={{ true: '#10b981', false: '#6b7280' }}
+        />
+      </View>
       {/* Push Notification Toggle */}
       <View className="flex-row justify-between items-center bg-white/10 p-4 rounded-2xl mb-4 border border-white/10">
-        <Text className="text-white text-base">Push Notifications</Text>
+        <Text className="text-white text-base">Enable Push Notifications</Text>
         <Switch
-          value={pushNotificationsEnabled} // State to track toggle
-          onValueChange={(value) => setPushNotificationsEnabled(value)} // Update state
+          value={pushNotificationsEnabled}
+          onValueChange={handlePushNotificationsToggle}
           thumbColor="#fff"
           trackColor={{ true: '#10b981', false: '#6b7280' }}
         />

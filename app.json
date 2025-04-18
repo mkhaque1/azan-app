@@ -65,6 +65,7 @@
             "./assets/sounds/azan3.mp3",
             "./assets/sounds/azan4.mp3"
           ],
+          "enableBackgroundRemoteNotifications": true,
           "mode": "production"
         }
       ],
