@@ -7,7 +7,7 @@ export const scheduleAzanNotification = async (
   await Notifications.scheduleNotificationAsync({
     content: {
       title: `${prayerName} Azan`,
-      sound: 'azan_sound.mp3',
+      sound: 'azan1.mp3',
       priority: Notifications.AndroidNotificationPriority.HIGH,
     },
     trigger: {
